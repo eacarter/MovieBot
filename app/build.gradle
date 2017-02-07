@@ -28,6 +28,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.google.code.gson:gson:2.3'
     compile 'commons-io:commons-io:2.4'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile files('/Users/eric/MovieBot/libs/volley.jar')
 }

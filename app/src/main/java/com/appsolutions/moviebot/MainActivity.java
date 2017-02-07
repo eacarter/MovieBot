@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -21,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
@@ -37,10 +40,12 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
-public class MainActivity extends AppCompatActivity implements AIListener {
+public class MainActivity extends AppCompatActivity implements AIListener, JsonInterface {
 
     private AIService aiService;
     private TextView helloworld;
+    private EditText helloedit;
+    private EditText helloedit2;
     String url = "http://www.omdbapi.com";
 
     @Override
@@ -50,9 +55,11 @@ public class MainActivity extends AppCompatActivity implements AIListener {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET},1);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
         helloworld = (TextView)findViewById(R.id.helloworld);
+        helloedit = (EditText)findViewById(R.id.helloedit);
+        helloedit2 = (EditText)findViewById(R.id.helloedit2);
 
         final AIConfiguration config = new AIConfiguration("958658b0ebfb48bc9bb93107c4bc4900",
                 AIConfiguration.SupportedLanguages.English,
@@ -67,26 +74,8 @@ public class MainActivity extends AppCompatActivity implements AIListener {
             public void onClick(View view) {
                 Snackbar.make(view, "Now Listening...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 //aiService.startListening();
-//                JsonRequest("Skins", 2007);
+                JsonRequest(helloedit.getText().toString(), helloedit2.getText().toString());
 
-                RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(url).build();
-
-                MovieInterface movieInterface = restAdapter.create(MovieInterface.class);
-
-                movieInterface.getFeed("Skins", "2007", new Callback<MovieModel>() {
-
-                    @Override
-                    public void success(MovieModel movieModel, retrofit.client.Response response) {
-                        helloworld.setText(movieModel.getTitle());
-                        Log.d("RetroFit", "success");
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        helloworld.setText(error.toString());
-                        Log.d("RetroFit", "failed");
-                    }
-                });
             }
         });
     }
@@ -132,27 +121,59 @@ public class MainActivity extends AppCompatActivity implements AIListener {
                 "\nParameters: " + parameterString);
     }
 
-//    public void JsonRequest(String name, @Nullable int year){
-//
-//        String url = "http://www.omdbapi.com/?t="+name+"&y="+year+"&plot=short&r=json";
-//
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
-//
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                helloworld.setText(response.toString());
-//                Log.d("blah", response.toString());
-//            }
-//        }, new Response.ErrorListener(){
-//
-//            @Override
-//            public void onErrorResponse(VolleyError volleyError) {
-//                helloworld.setText(volleyError.toString());
-//            }
-//        });
-//
-//        AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-//    }
+    @Override
+    public void JsonRequest(String name, String year){
+
+        String url = "http://www.omdbapi.com/?t="+name+"&y="+year+"&plot=short&r=json";
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
+
+            @Override
+            public void onResponse(JSONObject response) {
+                helloworld.setText(response.toString());
+                Log.d("blah", response.toString());
+            }
+        }, new Response.ErrorListener(){
+
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                helloworld.setText(volleyError.toString());
+            }
+        });
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    @Override
+    public void JsonRequest(String name) {
+        String url = "http://www.omdbapi.com/?t="+name+"&y=&plot=short&r=json";
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
+
+            @Override
+            public void onResponse(JSONObject response) {
+                helloworld.setText(response.toString());
+                Log.d("blah", response.toString());
+            }
+        }, new Response.ErrorListener(){
+
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                helloworld.setText(volleyError.toString());
+            }
+        });
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
 
     @Override
     public void onError(AIError error) {

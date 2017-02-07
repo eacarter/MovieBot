@@ -1,6 +1,7 @@
 package com.appsolutions.moviebot;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,21 +12,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.JsonElement;
 
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Map;
 
 import ai.api.AIListener;
 import ai.api.android.AIConfiguration;
@@ -120,7 +117,12 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
             @Override
             public void onResponse(JSONObject response) {
-                helloworld.setText(response.toString());
+
+                Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+                intent.putExtra("jsonObject", response.toString());
+                startActivity(intent);
+
+                //helloworld.setText(response.toString());
                 Log.d("blah", response.toString());
             }
         }, new Response.ErrorListener(){
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
     @Override
     public void onListeningStarted() {
-        
+
     }
 
     @Override

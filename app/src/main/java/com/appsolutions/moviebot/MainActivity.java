@@ -2,7 +2,6 @@ package com.appsolutions.moviebot;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -16,18 +15,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import ai.api.AIListener;
@@ -36,9 +33,6 @@ import ai.api.android.AIService;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
 
 public class MainActivity extends AppCompatActivity implements AIListener, JsonInterface {
 
@@ -46,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     private TextView helloworld;
     private EditText helloedit;
     private EditText helloedit2;
-    String url = "http://www.omdbapi.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +67,11 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             public void onClick(View view) {
                 Snackbar.make(view, "Now Listening...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 //aiService.startListening();
-                JsonRequest(helloedit.getText().toString(), helloedit2.getText().toString());
+                try {
+                    JsonRequest(helloedit.getText().toString(), helloedit2.getText().toString());
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -122,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     }
 
     @Override
-    public void JsonRequest(String name, String year){
+    public void JsonRequest(String name, String year) throws UnsupportedEncodingException{
 
-        String url = "http://www.omdbapi.com/?t="+name+"&y="+year+"&plot=short&r=json";
+        String url = "http://www.omdbapi.com/?t="+URLEncoder.encode(name, "UTF-8")+"&y="+year+"&plot=short&r=json";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
 
@@ -141,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             }
         });
 
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(9000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
@@ -149,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     }
 
     @Override
-    public void JsonRequest(String name) {
-        String url = "http://www.omdbapi.com/?t="+name+"&y=&plot=short&r=json";
+    public void JsonRequest(String name) throws UnsupportedEncodingException {
+        String url = "http://www.omdbapi.com/?t="+URLEncoder.encode(name, "UTF-8")+"&y=&plot=short&r=json";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
 
@@ -167,13 +164,12 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             }
         });
 
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(9000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
-
 
     @Override
     public void onError(AIError error) {

@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
     private AIService aiService;
     private TextView helloworld;
-    private EditText helloedit;
-    private EditText helloedit2;
+    private String title;
+    private String year;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
         helloworld = (TextView)findViewById(R.id.helloworld);
-        helloedit = (EditText)findViewById(R.id.helloedit);
-        helloedit2 = (EditText)findViewById(R.id.helloedit2);
 
         final AIConfiguration config = new AIConfiguration("958658b0ebfb48bc9bb93107c4bc4900",
                 AIConfiguration.SupportedLanguages.English,
@@ -66,13 +64,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Now Listening...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                //aiService.startListening();
-                try {
-                    JsonRequest(helloedit.getText().toString(), helloedit2.getText().toString());
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
+                aiService.startListening();
             }
         });
     }
@@ -103,19 +95,20 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     public void onResult(AIResponse response) {
         Result result = response.getResult();
 
-        // Get parameters
-        String parameterString = "";
         if (result.getParameters() != null && !result.getParameters().isEmpty()) {
-            for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
-                parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
 
-            }
+                title = result.getParameters().get("any").getAsString();
+
+                if(result.getParameters().containsKey("number")) {
+                    year = result.getParameters().get("number").getAsString();
+                }
         }
 
-        // Show results in TextView.
-        helloworld.setText("Query:" + result.getResolvedQuery() +
-                "\nAction: " + result.getAction() +
-                "\nParameters: " + parameterString);
+        try {
+            JsonRequest(title,year);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

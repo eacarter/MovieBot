@@ -78,13 +78,13 @@
                 android:layout_height="wrap_content"
                 android:text="Actors"
                 android:layout_below="@id/director"/>
-    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/plot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Plot"
-        android:layout_below="@id/details"/>
+            <TextView
+                android:id="@+id/plot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/actors"
+                android:text="Plot" />
+    </RelativeLayout>
 
 </LinearLayout>

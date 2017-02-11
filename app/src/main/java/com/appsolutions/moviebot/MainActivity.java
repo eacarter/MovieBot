@@ -31,10 +31,11 @@ import ai.api.model.AIError;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
 
-public class MainActivity extends AppCompatActivity implements AIListener, JsonInterface {
+public class MainActivity extends AppCompatActivity implements AIListener {
 
     private AIService aiService;
     private TextView helloworld;
+    private JsonRequester jrequest;
     private String title;
     private String year;
 
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     public void onResult(AIResponse response) {
         Result result = response.getResult();
 
+        jrequest = new JsonRequester();
+
         if (result.getParameters() != null && !result.getParameters().isEmpty()) {
 
                 title = result.getParameters().get("any").getAsString();
@@ -102,68 +105,11 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
         }
 
         try {
-            JsonRequest(title,year);
-        } catch (UnsupportedEncodingException e) {
+            jrequest.JsonRequest(title,year,getApplicationContext());
+        }
+        catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void JsonRequest(String name, String year) throws UnsupportedEncodingException{
-
-        String url = "http://www.omdbapi.com/?t="+URLEncoder.encode(name, "UTF-8")+"&y="+year+"&plot=short&r=json";
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
-
-            @Override
-            public void onResponse(JSONObject response) {
-
-                Intent intent = new Intent(MainActivity.this, InfoActivity.class);
-                intent.putExtra("jsonObject", response.toString());
-                startActivity(intent);
-
-                //helloworld.setText(response.toString());
-                Log.d("blah", response.toString());
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                helloworld.setText(volleyError.toString());
-            }
-        });
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(9000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-    }
-
-    @Override
-    public void JsonRequest(String name) throws UnsupportedEncodingException {
-        String url = "http://www.omdbapi.com/?t="+URLEncoder.encode(name, "UTF-8")+"&y=&plot=short&r=json";
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
-
-            @Override
-            public void onResponse(JSONObject response) {
-                helloworld.setText(response.toString());
-                Log.d("blah", response.toString());
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                helloworld.setText(volleyError.toString());
-            }
-        });
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(9000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
     @Override

@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
@@ -30,12 +32,13 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class InfoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView title;
-    ImageView poster;
+
     TextView year;
     TextView rated;
     TextView released;
@@ -44,6 +47,11 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
     TextView director;
     TextView actor;
     TextView plot;
+
+    JSONObject jOb;
+
+    private NetworkImageView poster;
+    private ImageLoader mImageLoader;
 
 
     @Override
@@ -54,7 +62,7 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         title = (TextView)findViewById(R.id.title);
-        poster = (ImageView)findViewById(R.id.poster);
+        poster = (NetworkImageView)findViewById(R.id.poster);
         year = (TextView)findViewById(R.id.year);
         rated = (TextView)findViewById(R.id.rated);
         released = (TextView)findViewById(R.id.released);
@@ -68,7 +76,6 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = getIntent();
         String jString = intent.getStringExtra("jsonObject");
 
-        JSONObject jOb = null;
         try {
             jOb = new JSONObject(jString);
         } catch (JSONException e) {
@@ -77,7 +84,6 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
 
         try {
             title.setText(jOb.getString("Title"));
-            //poster.setImageBitmap(getBitmapFromUrl(jOb.getString("Poster")));
             year.setText(jOb.getString("Year"));
             rated.setText(jOb.getString("Rated"));
             released.setText(jOb.getString("Released"));
@@ -113,6 +119,20 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        mImageLoader = VolleyImageRequest.getinstance(this.getApplicationContext()).getImageLoader();
+        try {
+            mImageLoader.get(jOb.getString("Poster"), ImageLoader.getImageListener(poster,
+                    R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
+                    poster.setImageUrl(jOb.getString("Poster"), mImageLoader);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -170,23 +190,5 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private static Bitmap getBitmapFromUrl(String src){
-        try {
-            Log.e("src",src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap","returned");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception",e.getMessage());
-            return null;
-        }
     }
 }

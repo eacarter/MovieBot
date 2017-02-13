@@ -10,9 +10,9 @@ import java.io.UnsupportedEncodingException;
  */
 public interface JsonInterface {
 
-    void JsonRequest(String name, String year, Context context) throws UnsupportedEncodingException;
+    void JsonRequest(String name, String year) throws UnsupportedEncodingException;
 
-    void JsonRequest(String name, Context context) throws UnsupportedEncodingException;
+    void JsonRequest(String name) throws UnsupportedEncodingException;
 
 
 }

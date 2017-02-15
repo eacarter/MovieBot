@@ -122,11 +122,11 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
                 }
             }
 
-            try {
-                JsonRequest(title);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                JsonRequest(title);
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
                 intent.putExtra("jsonObject", response.toString());
                 startActivity(intent);
 
-                //helloworld.setText(response.toString());
                 Log.d(TAG, response.toString());
             }
         }, new Response.ErrorListener(){
@@ -157,10 +156,11 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.d(TAG, volleyError.toString());
+                helloworld.setText(volleyError.toString());
             }
         });
 
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(9000,
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(10000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
@@ -182,10 +182,11 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.d(TAG, volleyError.toString());
+                helloworld.setText(volleyError.toString());
             }
         });
 
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(9000,
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(10000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 

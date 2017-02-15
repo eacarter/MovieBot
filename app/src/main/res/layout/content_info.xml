@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#000000"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -23,70 +25,25 @@
 
     <RelativeLayout
         android:id="@+id/details"
-        android:layout_below="@id/poster"
+        android:layout_toLeftOf="@id/poster"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#ffffff"
                 android:text="Title"/>
 
-            <TextView
-                android:id="@+id/year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Year"
-                android:layout_below="@id/title"/>
-
-            <TextView
-                android:id="@+id/rated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rated"
-                android:layout_below="@id/year"/>
-
-            <TextView
-                android:id="@+id/released"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Released"
-                android:layout_below="@id/rated"/>
-
-            <TextView
-                android:id="@+id/runtime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Runtime"
-                android:layout_below="@id/released"/>
-
-            <TextView
-                android:id="@+id/genre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Genre"
-                android:layout_below="@id/runtime"/>
-
-            <TextView
-                android:id="@+id/director"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Director"
-                android:layout_below="@id/genre"/>
-
-            <TextView
-                android:id="@+id/actors"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actors"
-                android:layout_below="@id/director"/>
-
-            <TextView
-                android:id="@+id/plot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/actors"
-                android:text="Plot" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/plot"
+        android:paddingTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:layout_below="@id/poster"
+        android:text="Plot" />
 
 </RelativeLayout>

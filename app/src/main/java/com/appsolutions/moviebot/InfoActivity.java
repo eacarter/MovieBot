@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,19 +39,16 @@ import java.net.URL;
 public class InfoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView title;
-
-    TextView year;
-    TextView rated;
-    TextView released;
-    TextView runtime;
-    TextView genre;
-    TextView director;
-    TextView actor;
     TextView plot;
+    TextView navTitle;
+    TextView navYear;
+
+    View headerView;
 
     JSONObject jOb;
 
     private NetworkImageView poster;
+    private NetworkImageView navPoster;
     private ImageLoader mImageLoader;
 
 
@@ -63,44 +61,26 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
 
         title = (TextView)findViewById(R.id.title);
         poster = (NetworkImageView)findViewById(R.id.poster);
-        year = (TextView)findViewById(R.id.year);
-        rated = (TextView)findViewById(R.id.rated);
-        released = (TextView)findViewById(R.id.released);
-        runtime = (TextView)findViewById(R.id.runtime);
-        genre = (TextView)findViewById(R.id.genre);
-        director = (TextView)findViewById(R.id.director);
-        actor = (TextView)findViewById(R.id.actors);
         plot = (TextView)findViewById(R.id.plot);
-
 
         Intent intent = getIntent();
         String jString = intent.getStringExtra("jsonObject");
 
         try {
             jOb = new JSONObject(jString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            title.setText(jOb.getString("Title"));
-            year.setText(jOb.getString("Year"));
-            rated.setText(jOb.getString("Rated"));
-            released.setText(jOb.getString("Released"));
-            runtime.setText(jOb.getString("Runtime"));
-            genre.setText(jOb.getString("Genre"));
-            director.setText(jOb.getString("Director"));
-            actor.setText(jOb.getString("Actors"));
+            setTitle(jOb.getString("Title"));
+            title.setText("Title: " +jOb.getString("Title") + "\n" +
+                    "Year: " + jOb.getString("Year") + "\n" +
+                    "Rated: " + jOb.getString("Rated") + "\n" +
+                    "Released: " + jOb.getString("Released") + "\n" +
+                    "Runtime: " + jOb.getString("Runtime") + "\n" +
+                    "Genre: " + jOb.getString("Genre") + "\n" +
+                    "Director(s): " + jOb.getString("Director") + "\n" +
+                    "Actor(s): " + jOb.getString("Actors"));
             plot.setText(jOb.getString("Plot"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-//        text = (TextView)findViewById(R.id.jData);
-//
-//        text.setText(jOb.toString());
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -113,26 +93,32 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        headerView = navigationView.getHeaderView(0);
+        navTitle = (TextView)headerView.findViewById(R.id.navtitle);
+        navYear = (TextView)headerView.findViewById(R.id.navyear);
+        navPoster = (NetworkImageView)headerView.findViewById(R.id.Navposter);
+
+        try {
+            navTitle.setText(jOb.getString("Title"));
+            navYear.setText(jOb.getString("Year"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onStart(){
         super.onStart();
-
-        mImageLoader = VolleyImageRequest.getinstance(this.getApplicationContext()).getImageLoader();
-        try {
-            mImageLoader.get(jOb.getString("Poster"), ImageLoader.getImageListener(poster,
-                    R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
-                    poster.setImageUrl(jOb.getString("Poster"), mImageLoader);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        getPoster(poster);
+        getPoster(navPoster);
     }
 
     @Override
@@ -190,5 +176,16 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void getPoster(NetworkImageView image){
+        mImageLoader = VolleyImageRequest.getinstance(this.getApplicationContext()).getImageLoader();
+        try {
+            mImageLoader.get(jOb.getString("Poster"), ImageLoader.getImageListener(image,
+                    R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
+            image.setImageUrl(jOb.getString("Poster"), mImageLoader);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

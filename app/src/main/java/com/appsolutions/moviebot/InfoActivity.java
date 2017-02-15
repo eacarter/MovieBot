@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -47,10 +48,20 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
 
     JSONObject jOb;
 
+    AIApplication AiApp;
+
     private NetworkImageView poster;
     private NetworkImageView navPoster;
     private ImageLoader mImageLoader;
 
+
+    private final Handler handler = new Handler();
+    private Runnable pauseCallback = new Runnable() {
+        @Override
+        public void run() {
+            AiApp.onActivityPaused();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +69,8 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_info);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        AiApp = (AIApplication)getApplication();
 
         title = (TextView)findViewById(R.id.title);
         poster = (NetworkImageView)findViewById(R.id.poster);
@@ -119,6 +132,18 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         getPoster(poster);
         getPoster(navPoster);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        AiApp.onActivityResume();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        handler.postDelayed(pauseCallback, 500);
     }
 
     @Override

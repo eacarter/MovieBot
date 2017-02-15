@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -36,6 +37,7 @@ import ai.api.model.Result;
 public class MainActivity extends AppCompatActivity implements AIListener, JsonInterface {
 
     private AIService aiService;
+    private AIApplication AiApp;
     private String TAG = "Main";
     private TextView helloworld;
     private TextView edittext;
@@ -43,12 +45,22 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     private String title;
     private String year;
 
+    private final Handler handler = new Handler();
+    private Runnable pauseCallback = new Runnable() {
+        @Override
+        public void run() {
+            AiApp.onActivityPaused();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        AiApp = (AIApplication)getApplication();
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
@@ -193,6 +205,17 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
         AppSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        AiApp.onActivityResume();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        handler.postDelayed(pauseCallback, 500);
+    }
 
     @Override
     public void onAudioLevel(float level) {
@@ -201,16 +224,16 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
     @Override
     public void onListeningStarted() {
-
+        Log.d(TAG, "Now listening....");
     }
 
     @Override
     public void onListeningCanceled() {
-
+        Log.d(TAG, "Listening Cancelled");
     }
 
     @Override
     public void onListeningFinished() {
-
+        Log.d(TAG, "Stopped Listening");
     }
 }

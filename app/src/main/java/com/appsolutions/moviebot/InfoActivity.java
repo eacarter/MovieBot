@@ -21,10 +21,16 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -35,21 +41,27 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
-public class InfoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class InfoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, JsonInterface {
 
     TextView title;
     TextView plot;
     TextView navTitle;
     TextView navYear;
+    TextView trailer;
 
     View headerView;
+
+    String url;
 
     JSONObject jOb;
 
     private NetworkImageView poster;
     private NetworkImageView navPoster;
     private ImageLoader mImageLoader;
+
+    private static String TAG = "InfoActivity";
 
 
     @Override
@@ -62,6 +74,7 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         title = (TextView)findViewById(R.id.title);
         poster = (NetworkImageView)findViewById(R.id.poster);
         plot = (TextView)findViewById(R.id.plot);
+        trailer = (TextView)findViewById(R.id.trailerText);
 
         Intent intent = getIntent();
         String jString = intent.getStringExtra("jsonObject");
@@ -81,6 +94,20 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        trailer.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v)  {
+                try {
+                    JsonRequest(jOb.getString("Title"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -188,4 +215,38 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void JsonRequest(String name, String year) throws UnsupportedEncodingException {
+
+    }
+
+    @Override
+    public void JsonRequest(String name) throws UnsupportedEncodingException {
+        url = "http://trailersapi.com/trailers.json?movie="+ URLEncoder.encode(name, "UTF-8");
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>(){
+
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d(TAG, response.toString());
+                Log.d(TAG, url.toString());
+            }
+
+        }, new Response.ErrorListener(){
+
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.d(TAG, volleyError.toString());
+               // helloworld.setText(volleyError.toString());
+            }
+        });
+
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        AppSingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
+    }
+
 }

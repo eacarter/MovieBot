@@ -46,4 +46,28 @@
         android:layout_below="@id/poster"
         android:text="Plot" />
 
+    <RelativeLayout
+        android:layout_below="@id/plot"
+        android:paddingTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/trailer"
+            android:src="@android:drawable/ic_media_play"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/trailerText"
+            android:layout_toRightOf="@id/trailer"
+            android:textColor="#ffffff"
+            android:text="Play Trailer"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
 </RelativeLayout>

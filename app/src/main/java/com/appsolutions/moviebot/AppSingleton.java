@@ -1,6 +1,7 @@
 package com.appsolutions.moviebot;
 
 import android.content.Context;
+import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,14 +14,14 @@ public class AppSingleton {
     private RequestQueue mRequestQueue;
     private static AppSingleton ourInstance;
 
-    private AppSingleton(Context context) {
-        mContext = context;
+    private AppSingleton(View view) {
+        mContext = view.getContext();
         mRequestQueue = getRequestQueue();
     }
 
-    public static synchronized AppSingleton getInstance(Context context) {
+    public static synchronized AppSingleton getInstance(View view) {
         if(ourInstance == null){
-            ourInstance = new AppSingleton(context);
+            ourInstance = new AppSingleton(view);
         }
         return ourInstance;
     }

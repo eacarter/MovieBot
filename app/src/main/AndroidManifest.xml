@@ -22,8 +22,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".InfoActivity"
-            android:label="@string/title_activity_info"
+            android:name=".ResultTabsActivity"
+            android:label="@string/title_activity_result_tabs"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

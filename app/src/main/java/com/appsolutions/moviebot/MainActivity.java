@@ -21,8 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -47,12 +45,10 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
-        helloworld = (TextView)findViewById(R.id.helloworld);
+
         edittext = (TextView)findViewById(R.id.helloedit);
         edittext2 = (TextView)findViewById(R.id.helloedit2);
 
@@ -121,12 +117,6 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
                     e.printStackTrace();
                 }
             }
-
-//            try {
-//                JsonRequest(title);
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
@@ -145,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
             @Override
             public void onResponse(JSONObject response) {
 
-                Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+                Intent intent = new Intent(MainActivity.this, ResultTabsActivity.class);
                 intent.putExtra("jsonObject", response.toString());
                 startActivity(intent);
 

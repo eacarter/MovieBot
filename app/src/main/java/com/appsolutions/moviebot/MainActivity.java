@@ -3,16 +3,17 @@ package com.appsolutions.moviebot;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -21,8 +22,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Set;
 
 import ai.api.AIListener;
 import ai.api.android.AIConfiguration;
@@ -33,24 +37,55 @@ import ai.api.model.Result;
 
 public class MainActivity extends AppCompatActivity implements AIListener, JsonInterface {
 
-    private AIService aiService;
-    private String TAG = "Main";
-    private TextView helloworld;
-    private TextView edittext;
-    private TextView edittext2;
-    private String title;
-    private String year;
+    EditText edittext;
+    EditText edittext2;
+    TextView helloworld;
+    Button button;
+    AIService aiService;;
+    String title;
+    String year;
+    String TAG = "MainMovieBot";
+    ArrayList<String> data;
+
+    SharedPreferences sharedPreferences;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+
+                    return true;
+                case R.id.navigation_dashboard:
+                    sharedPreferences = getSharedPreferences("MOVIELIST", Context.MODE_PRIVATE);
+                    Set<String> set = sharedPreferences.getStringSet("LIST", null);
+                    if(set != null) {
+                        data = new ArrayList<>(set);
+                    }
+                    MovieListFragment.newInstance(data);
+                    return true;
+                case R.id.navigation_notifications:
+                    aiService.startListening();
+                   return true;
+            }
+            return false;
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
 
-        edittext = (TextView)findViewById(R.id.helloedit);
-        edittext2 = (TextView)findViewById(R.id.helloedit2);
+        edittext = (EditText) findViewById(R.id.helloedit);
+        edittext2 = (EditText) findViewById(R.id.helloedit2);
+        button = (Button) findViewById(R.id.hellobutton);
 
         final AIConfiguration config = new AIConfiguration("958658b0ebfb48bc9bb93107c4bc4900",
                 AIConfiguration.SupportedLanguages.English,
@@ -59,13 +94,9 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
         aiService = AIService.getService(this, config);
         aiService.setListener(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Now Listening...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-               // aiService.startListening();
-
+            public void onClick(View v) {
                 title = edittext.getText().toString();
                 year = edittext2.getText().toString();
 
@@ -76,28 +107,10 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
                 }
             }
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @Override
@@ -203,4 +216,5 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     public void onListeningFinished() {
 
     }
+
 }

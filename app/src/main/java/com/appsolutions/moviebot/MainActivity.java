@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -37,14 +38,11 @@ import ai.api.model.Result;
 
 public class MainActivity extends AppCompatActivity implements AIListener, JsonInterface {
 
-    EditText edittext;
-    EditText edittext2;
+    EditText edittext, edittext2;
     TextView helloworld;
     Button button;
-    AIService aiService;;
-    String title;
-    String year;
-    String TAG = "MainMovieBot";
+    AIService aiService;
+    String title, year,TAG = "MainMovieBot" ;
     ArrayList<String> data;
 
     SharedPreferences sharedPreferences;
@@ -82,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
-
+        helloworld = (TextView)findViewById(R.id.error);
         edittext = (EditText) findViewById(R.id.helloedit);
         edittext2 = (EditText) findViewById(R.id.helloedit2);
         button = (Button) findViewById(R.id.hellobutton);
@@ -135,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
     @Override
     public void onError(AIError error) {
-        helloworld.setText(error.getMessage());
+        helloworld.setText(error.getMessage().toString());
     }
 
     @Override
@@ -204,17 +202,17 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
 
     @Override
     public void onListeningStarted() {
-
+        Toast.makeText(this, "Now Listening", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onListeningCanceled() {
-
+        Toast.makeText(this, "Cancelled Listening", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onListeningFinished() {
-
+        Toast.makeText(this, "Stopped Listening", Toast.LENGTH_SHORT).show();
     }
 
 }

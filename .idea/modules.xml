@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MovieBot.iml" filepath="$PROJECT_DIR$/MovieBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MovieBotNew.iml" filepath="$PROJECT_DIR$/MovieBotNew.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/sdl_android/sdl_android.iml" filepath="$PROJECT_DIR$/sdl_android/sdl_android.iml" />
       <module fileurl="file://$PROJECT_DIR$/sdl_android/sdl_android_lib/sdl_android_lib.iml" filepath="$PROJECT_DIR$/sdl_android/sdl_android_lib/sdl_android_lib.iml" />

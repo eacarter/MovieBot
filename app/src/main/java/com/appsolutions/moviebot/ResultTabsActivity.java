@@ -185,12 +185,6 @@ public class ResultTabsActivity extends AppCompatActivity {
             }
         }
 
-        /*
-http://api-public.guidebox.com/v2/search?api_key=YOUR_API_KEY&type=movie&field=title&query=Terminator
-
-
-         */
-
         @Override
         public int getCount() {
             // Show 3 total pages.

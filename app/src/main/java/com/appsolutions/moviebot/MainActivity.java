@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
         edittext2 = (EditText) findViewById(R.id.helloedit2);
         button = (Button) findViewById(R.id.hellobutton);
 
-        final AIConfiguration config = new AIConfiguration("958658b0ebfb48bc9bb93107c4bc4900",
+        final AIConfiguration config = new AIConfiguration("9ae22d6dd3c54144b162b195045bd263",
                 AIConfiguration.SupportedLanguages.English,
                 AIConfiguration.RecognitionEngine.System);
 
@@ -128,6 +128,13 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
                     e.printStackTrace();
                 }
             }
+            else{
+                try{
+                    JsonRequest(title);
+                }catch (UnsupportedEncodingException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -139,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     @Override
     public void JsonRequest(String name, String year) throws UnsupportedEncodingException{
 
-        String url = "http://www.omdbapi.com/?t="+ URLEncoder.encode(name, "UTF-8")+"&y="+year+"&plot=short&r=json";
+        String url = "http://www.omdbapi.com/?apikey=5df1c91c&t="+ URLEncoder.encode(name, "UTF-8")+"&y="+year+"&plot=short&r=json";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>(){
 

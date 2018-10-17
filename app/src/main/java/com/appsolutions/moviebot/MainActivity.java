@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        AiApp = (AIApplication)getApplication();
+//        AiApp = (AIApplication)getApplication();
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
@@ -208,13 +208,13 @@ public class MainActivity extends AppCompatActivity implements AIListener, JsonI
     @Override
     protected void onResume(){
         super.onResume();
-        AiApp.onActivityResume();
+//        AiApp.onActivityResume();
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        handler.postDelayed(pauseCallback, 500);
+//        handler.postDelayed(pauseCallback, 500);
     }
 
     @Override

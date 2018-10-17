@@ -70,7 +70,7 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        AiApp = (AIApplication)getApplication();
+//        AiApp = (AIApplication)getApplication();
 
         title = (TextView)findViewById(R.id.title);
         poster = (NetworkImageView)findViewById(R.id.poster);
@@ -137,13 +137,13 @@ public class InfoActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume(){
         super.onResume();
-        AiApp.onActivityResume();
+//        AiApp.onActivityResume();
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        handler.postDelayed(pauseCallback, 500);
+//        handler.postDelayed(pauseCallback, 500);
     }
 
     @Override
